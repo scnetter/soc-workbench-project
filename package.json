@@ -5,10 +5,12 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "bun run src/index.ts",
-    "dev": "bun --watch run src/index.ts",
+    "start": "bun run src/repl.ts",
+    "dev": "bun --watch run src/repl.ts",
     "typecheck": "tsc --noEmit",
-    "test:llm": "bun run src/test-llm.ts"
+    "test:llm": "bun run src/test-llm.ts",
+    "test:mcp": "bun run src/test-mcp.ts",
+    "repl": "bun run src/repl.ts"
   },
   "dependencies": {
     "@langchain/core": "^1.2.3",
