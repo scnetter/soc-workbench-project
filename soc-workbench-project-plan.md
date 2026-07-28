@@ -34,7 +34,7 @@ This approach provides:
 
 # Vision
 
-Create a SOC analyst assistant capable of:
+Create a SOC analyst assistant capable of:~
 
 - Analyzing detections
 - Investigating hosts
