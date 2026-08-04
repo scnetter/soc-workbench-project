@@ -44,5 +44,17 @@ FALCON_BASE_URL=https://api.crowdstrike.com
 
 ---
 
+## 📚 Guides & Playbooks
+
+### Analyst Playbooks (`playbooks/`)
+Markdown files designed for **non-programmer SOC analysts** to update query templates, FQL syntax rules, and investigation playbooks without modifying code:
+* **[playbooks/falcon-fql.md](playbooks/falcon-fql.md)**: Verified FQL query parameters and syntax rules for CrowdStrike Spotlight, Detections, and Host Search endpoints.
+
+### Architecture & Optimization Guides (`docs/`)
+Architectural documentation and blueprints for future platform expansion:
+* **[docs/query-optimization-guide.md](docs/query-optimization-guide.md)**: Decision framework and implementation guide for managing complex tool queries, progressive disclosure reference tools, and LangGraph subgraphs.
+
+---
+
 ## 📌 Project Tracking & Ideas
 For future feature ideas, upcoming MCP server integrations (Jira, Zscaler), and playbook roadmaps, see [TODO.md](TODO.md).
