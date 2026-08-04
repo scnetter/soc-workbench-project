@@ -97,7 +97,7 @@ async function startRepl() {
   const agent = createReactAgent({
     llm,
     tools,
-    stateModifier: systemPrompt,
+    prompt: systemPrompt,
   });
 
   // Conversation history memory array
