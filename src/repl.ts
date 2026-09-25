@@ -7,9 +7,11 @@ import { DynamicStructuredTool } from "@langchain/core/tools";
 import * as readline from "readline/promises";
 import { stdin as input, stdout as output } from "process";
 import { loadMcpTools } from "./mcp-adapter.js";
+import { getAbuseIpDbTools } from "./tools/abuseipdb.js";
+import { getIpGeolocationTools } from "./tools/ipgeolocation.js";
 
 /**
- * Interactive SOC Analyst Workbench REPL powered by LangGraph ReAct Agent and Falcon MCP.
+ * Interactive SOC Analyst Workbench REPL powered by LangGraph ReAct Agent, Falcon MCP, AbuseIPDB, and ipgeolocation.io.
  */
 async function startRepl() {
   console.log("==================================================");
@@ -50,6 +52,24 @@ async function startRepl() {
   let tools: DynamicStructuredTool[] = [];
   let mcpClient: Client | null = null;
 
+  // Initialize IPGeolocation Tools if API key exists
+  const ipGeoTools = getIpGeolocationTools();
+  if (ipGeoTools.length > 0) {
+    tools.push(...ipGeoTools);
+    console.log(`✅ IPGeolocation Connected! Loaded ${ipGeoTools.length} geolocation tools.`);
+  } else {
+    console.log("ℹ️ No IPGEOLOCATION_API_KEY found in .env.");
+  }
+
+  // Initialize AbuseIPDB Threat Intel Tools if API key exists
+  const abuseIpDbTools = getAbuseIpDbTools();
+  if (abuseIpDbTools.length > 0) {
+    tools.push(...abuseIpDbTools);
+    console.log(`✅ AbuseIPDB Connected! Loaded ${abuseIpDbTools.length} threat intelligence tools.`);
+  } else {
+    console.log("ℹ️ No IPABUSEDB_API_KEY found in .env.");
+  }
+
   // Initialize Falcon MCP Server connection if credentials exist
   if (falconClientId && falconClientSecret) {
     try {
@@ -71,23 +91,27 @@ async function startRepl() {
       );
 
       await mcpClient.connect(transport);
-      tools = await loadMcpTools(mcpClient);
-      console.log(`✅ Falcon MCP Connected! Loaded ${tools.length} security tools.`);
+      const mcpTools = await loadMcpTools(mcpClient);
+      tools.push(...mcpTools);
+      console.log(`✅ Falcon MCP Connected! Loaded ${mcpTools.length} security tools.`);
     } catch (err) {
-      console.warn("⚠️ Could not connect to Falcon MCP. Running in LLM-only chat mode.");
+      console.warn("⚠️ Could not connect to Falcon MCP. Continuing with available tools.");
       console.warn(err);
     }
   } else {
-    console.log("ℹ️ No Falcon MCP credentials found in .env. Running in LLM-only mode.");
+    console.log("ℹ️ No Falcon MCP credentials found in .env.");
   }
 
   // System Prompt / Persona for SOC Analyst ReAct Agent
   const systemPrompt = new SystemMessage(
-    "You are an expert Security Operations Center (SOC) Lead Analyst assistant equipped with CrowdStrike Falcon MCP tools.\n" +
+    "You are an expert Security Operations Center (SOC) Lead Analyst assistant equipped with CrowdStrike Falcon MCP, IPGeolocation, and AbuseIPDB tools.\n" +
     "Your tone is professional, objective, analytical, and concise.\n" +
-    "When asked to investigate detections, hosts, IOCs, or vulnerabilities, use your available Falcon MCP tools to fetch live evidence.\n" +
-    "Falcon Query Language (FQL) Filter Guidelines:\n" +
-    "• Spotlight Vulnerabilities (`falcon_search_vulnerabilities`): Use `host_info.hostname:'<name>'` or `aid:'<id>'` in FQL filters. (Do NOT use `device.hostname` or `device.device_id`).\n" +
+    "When asked to investigate detections, hosts, IOCs, IP addresses, subnets, domains, or vulnerabilities, use your available tools to fetch live evidence.\n" +
+    "Tool Routing & Threat Intelligence Guidelines:\n" +
+    "• IP Address Geolocation (`ipgeolocation_lookup`): ALWAYS use `ipgeolocation_lookup` (via ipgeolocation.io) for geolocation type questions for IP addresses (country, city, state, lat/long, ISP, organization, timezone).\n" +
+    "• Domain Names & IP Threat Reputation (`abuseipdb_check_ip`): ALWAYS use `abuseipdb_check_ip` (via AbuseIPDB) for domain name queries, domain reputation checks, and IP threat abuse history.\n" +
+    "• Subnet Check (`abuseipdb_check_subnet`): Use for CIDR block range investigations.\n" +
+    "• Spotlight Vulnerabilities (`falcon_search_vulnerabilities`): Use `host_info.hostname:'<name>'` or `aid:'<id>'` in FQL filters.\n" +
     "• Detections (`falcon_search_detections`): Use `device.hostname:'<name>'` or `hostname:'<name>'`.\n" +
     "• Hosts (`falcon_search_hosts`): Use `hostname:'<name>'`.\n" +
     "Always present findings clearly with severity assessment, evidence tables, and actionable analyst recommendations."

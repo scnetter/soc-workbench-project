@@ -8,7 +8,10 @@ A portable, locally deployable SOC analyst workbench built with **TypeScript**, 
 - **Runtime & Package Manager**: Bun (TypeScript native)
 - **Agent Framework**: `@langchain/langgraph` & `@langchain/openai`
 - **LLM**: Azure OpenAI (GPT-5.1)
-- **Tool Protocol**: `@modelcontextprotocol/sdk` (CrowdStrike Falcon MCP via `uvx`)
+- **Tool Protocols & APIs**:
+  - CrowdStrike Falcon MCP via `uvx`
+  - AbuseIPDB Threat Intelligence API (`api.abuseipdb.com`)
+  - IPGeolocation.io Location API (`api.ipgeolocation.io`)
 
 ---
 
@@ -25,7 +28,7 @@ Copy `.env.example` to `.env` and fill in your credentials:
 cp .env.example .env
 ```
 
-Set your Azure OpenAI and CrowdStrike Falcon credentials:
+Set your Azure OpenAI, CrowdStrike Falcon, AbuseIPDB, and IPGeolocation credentials:
 ```ini
 AZURE_OPENAI_API_KEY=your_key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/openai/v1
@@ -34,12 +37,18 @@ AZURE_OPENAI_MODEL_NAME=gpt-5.1
 FALCON_CLIENT_ID=your_client_id
 FALCON_CLIENT_SECRET=your_client_secret
 FALCON_BASE_URL=https://api.crowdstrike.com
+
+IPABUSEDB_API_KEY=your_abuseipdb_api_key
+IPGEOLOCATION_API_KEY=your_ipgeolocation_api_key
 ```
 
 ### 3. Run Commands
 * **Launch Interactive REPL**: `bun start`
 * **Test Azure OpenAI Connection**: `bun run test:llm`
 * **Test Falcon MCP Tool Discovery**: `bun run test:mcp`
+* **Test AbuseIPDB Integration**: `bun run test:abuseipdb`
+* **Test IPGeolocation Integration**: `bun run test:ipgeo`
+* **Test Agent Geolocation Routing**: `bun run test:agent-geo`
 * **TypeScript Typecheck**: `bun run typecheck`
 
 ---
