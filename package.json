@@ -13,7 +13,8 @@
     "test:abuseipdb": "bun run src/test-abuseipdb.ts",
     "test:ipgeo": "bun run src/test-ipgeolocation.ts",
     "test:agent-geo": "bun run src/test-agent-geolocation.ts",
-    "repl": "bun run src/repl.ts"
+    "repl": "bun run src/repl.ts",
+    "help": "bun run src/repl.ts --help"
   },
   "dependencies": {
     "@langchain/core": "^1.2.3",

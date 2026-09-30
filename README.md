@@ -44,12 +44,23 @@ IPGEOLOCATION_API_KEY=your_ipgeolocation_api_key
 
 ### 3. Run Commands
 * **Launch Interactive REPL**: `bun start`
+* **Show Help & Command Reference**: `bun start --help` or `bun run help`
+* **Show Version**: `bun run repl -v`
 * **Test Azure OpenAI Connection**: `bun run test:llm`
 * **Test Falcon MCP Tool Discovery**: `bun run test:mcp`
 * **Test AbuseIPDB Integration**: `bun run test:abuseipdb`
 * **Test IPGeolocation Integration**: `bun run test:ipgeo`
 * **Test Agent Geolocation Routing**: `bun run test:agent-geo`
 * **TypeScript Typecheck**: `bun run typecheck`
+
+### 4. REPL Commands & Multi-Line Input
+The interactive CLI supports multi-line text (such as email headers, log blocks, or scripts), file references, and session commands:
+* **Help & Usage**: Type `/help`, `help`, or `?` at any time to view the command reference.
+* **Multi-line Blocks (`"""`)**: Start a prompt with `"""`, paste or type multiple lines, and end with `"""`.
+* **Paste Mode (`/paste`)**: Enter `/paste [optional instructions]`. Paste raw text, then type `EOF` or `---` on a new line to send.
+* **Inline File Attachments (`@file`)**: Type `@path/to/file` in any prompt (e.g. `Analyze headers: @samples/phish.eml`) to automatically expand file contents into the request.
+* **File Load Command (`/file`)**: Use `/file <path> [prompt]` to load an entire file directly into the prompt.
+* **Session Management**: Use `/clear` or `/reset` to clear conversation memory, and `/exit` or `/quit` to close.
 
 ---
 
